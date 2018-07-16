@@ -20,6 +20,8 @@
 
 var game;
 
+var isGameOverChanged = false;
+
 // $(document).ready()...
 $(function () {
   init();
@@ -79,6 +81,10 @@ function initGrid() {
 
 // implements the game logic
 function keyboardHandler(event) {
+  if (game.IsGameOver()) {
+    return;
+  }
+
   var didBoardChange = false;
 
   switch (event.code) {
@@ -110,7 +116,23 @@ function updateGameStatus() {
 
   updateGrid();
 
-  //TODO is game won or over?
+  if (!isGameOverChanged) {
+    if (game.maxCell == 2048) {
+      // show win state
+
+      window.alert("You win!");
+
+      // only show once
+      isGameOverChanged = true;
+    } else if (game.maxCell < 2048 && game.IsGameOver()) {
+      // show lose state
+
+      window.alert("You lose!");
+
+      // only show once
+      isGameOverChanged = true;
+    }
+  }
 }
 
 
