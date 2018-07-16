@@ -1,0 +1,85 @@
+body {
+  margin: 20px 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+h1 {
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+
+#config {
+  margin: 0;
+  width: 30%;
+  min-height: 400px;
+  min-width: 100px;
+  max-width: 300px;
+  float: left;
+  padding: 10px 0;
+  text-align: right;
+  font-size: 1.1em;
+}
+
+#config .license {
+  font-size: 0.8em;
+}
+
+#game {
+  width: 70%;
+  float: left;
+  padding: 10px 0;
+}
+
+#grid {
+  width: 400px;
+  height: 400px;
+  margin: 0 auto;
+  padding: 0;
+  background-color: #f19d3e;
+}
+
+#win {
+  text-align: center;
+}
+
+#win span {
+  font-size: 3em;
+  font-weight: bold;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: darkblue;
+  background: lightblue;
+  border-radius: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.row {
+  height: 100px;
+  max-height: 100px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.row div {
+  height: 90px;
+  width: 90px;
+  max-height: 90px;
+  max-width: 90px;
+  margin: 5px;
+  padding: 0;
+  float: left;
+  border-radius: 10px;
+}
+
+.row div.cell {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+  box-shadow: none;
+  color: #6d3900;
+  background-color: #ffc07a;
+}
