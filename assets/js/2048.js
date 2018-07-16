@@ -18,17 +18,7 @@
 
 // NOTE: Sorry, no namespace.
 
-// the internal game board/grid
-var board;
-
-var turnCount;
-
-var DIRECTION = {
-  Up: 0,
-  Down: 1,
-  Left: 2,
-  Right: 3
-};
+var game;
 
 // $(document).ready()...
 $(function () {
@@ -51,34 +41,31 @@ function init() {
 }
 
 function resetGame() {
-  board = null;
-  turnCount = 0;
+  game = new Game(4, 2);
 
-  initGrid(4);
-
-  initGame(4);
+  initGrid();
 
   updateGameStatus();
 }
 
 // build the grid
-function initGrid(gridSize) {
+function initGrid() {
   $("#game").empty();
 
   $("<div/>")
     .attr("id", "grid")
     .appendTo("#game");
 
-  for (var y = 0; y < gridSize; y++) {
+  for (var y = 0; y < game.boardSize; y++) {
     // create row
     var row = $("<div/>")
       .attr("class", "row")
-      .height(Math.floor($("#grid").height() / gridSize))
+      .height(Math.floor($("#grid").height() / game.boardSize))
       .appendTo("#grid");
 
-    for (var x = 0; x < gridSize; x++) {
+    for (var x = 0; x < game.boardSize; x++) {
       // create cell
-      var cellSize = Math.floor(Number(row.width()) / gridSize);
+      var cellSize = Math.floor(Number(row.width()) / game.boardSize);
 
       var cell = $("<div/>")
         .attr("id", "cell" + "-" + x + "-" + y)
@@ -90,332 +77,48 @@ function initGrid(gridSize) {
   }
 }
 
-function initGame(gridSize) {
-  board = new Array(gridSize);
-
-  for (var x = 0; x < gridSize; x++) {
-    board[x] = new Array(gridSize);
-
-    for (var y = 0; y < gridSize; y++) {
-      board[x][y] = 0;
-    }
-  }
-
-  addRandos(2);
-}
-
-function addRandos(count) {
-  //TODO this should be optimized; keep track of free spaces instead
-  //     of counting each time
-  var numFreeSpaces = 0;
-
-  for (var x = 0; x < board.length; x++) {
-    for (var y = 0; y < board[x].length; y++) {
-      if (board[x][y] == 0) {
-        numFreeSpaces++;
-      }
-
-      if (numFreeSpaces == count) {
-        break;
-      }
-    }
-
-    if (numFreeSpaces == count) {
-      break;
-    }
-  }
-
-  if (numFreeSpaces != count) {
-    return false;
-  }
-
-  for (var i = 0; i < count; i++) {
-    var x, y;
-
-    do {
-      x = Math.floor(Math.random() * board.length);
-      y = Math.floor(Math.random() * board[i].length);
-    } while (board[x][y] > 0)
-
-    // pick a 2 or a 4, but pick 2 more often than 4
-    board[x][y] = Math.pow(2, Math.round(Math.random() * 0.65 + 1));
-  }
-
-  return true;
-}
-
 // implements the game logic
 function keyboardHandler(event) {
   var didBoardChange = false;
 
   switch (event.code) {
     case "ArrowUp":
-      didBoardChange = moveBoardUp();
+      didBoardChange = game.MoveUp();
 
       break;
     case "ArrowDown":
-      didBoardChange = moveBoardDown();
+      didBoardChange = game.MoveDown();
 
       break;
     case "ArrowLeft":
-      didBoardChange = moveBoardLeft();
+      didBoardChange = game.MoveLeft();
 
       break;
     case "ArrowRight":
-      didBoardChange = moveBoardRight();
+      didBoardChange = game.MoveRight();
 
       break;
   }
 
-  if (didBoardChange && addRandos(1)) {
-    turnCount++;
-  } else {
-    //TODO game over
+  if (didBoardChange && game.AddRandos(1)) {
+    updateGameStatus();
   }
-
-  updateGameStatus();
-}
-
-function moveBoardUp() {
-  // for each column, look down and merge up
-
-  var didBoardChange = false;
-
-  for (var x = 0; x < board.length; x++) {
-    for (var y1 = 0; y1 < board[x].length - 1; y1++) {
-      var y1Val = board[x][y1];
-
-      for (var y2 = y1 + 1; y2 < board[x].length; y2++) {
-        var y2Val = board[x][y2];
-
-        if (y2Val == 0) {
-          // keep searching
-
-          continue;
-        } else if (y1Val == 0 && y2Val != 0) {
-          // slide up and keep searching
-
-          board[x][y1] = y2Val;
-          board[x][y2] = 0;
-
-          y1Val = y2Val;
-
-          didBoardChange = true;
-
-          continue;
-        } else if (y1Val != 0 && y1Val == y2Val) {
-          // merge and move on
-
-          board[x][y1] += y2Val;
-          board[x][y2] = 0;
-
-          didBoardChange = true;
-
-          break;
-        } else if (y1Val != 0 && y1Val != y2Val && Math.abs(y2 - y1) > 1) {
-          // slide up and move on
-
-          board[x][y1 + 1] = y2Val;
-          board[x][y2] = 0;
-
-          didBoardChange = true;
-
-          break;
-        } else if (y1Val != 0 && y1Val != y2Val && Math.abs(y2 - y1) == 1) {
-          // move on
-
-          break;
-        }
-      }
-    }
-  }
-
-  return didBoardChange;
-}
-
-function moveBoardDown() {
-  // for each column, look down and merge up
-
-  var didBoardChange = false;
-
-  for (var x = 0; x < board.length; x++) {
-    for (var y1 = board[x].length - 1; y1 > 0; y1--) {
-      var y1Val = board[x][y1];
-
-      for (var y2 = y1 - 1; y2 >= 0; y2--) {
-        var y2Val = board[x][y2];
-
-        if (y2Val == 0) {
-          // keep searching
-
-          continue;
-        } else if (y1Val == 0 && y2Val != 0) {
-          // slide down and keep searching
-
-          board[x][y1] = y2Val;
-          board[x][y2] = 0;
-
-          y1Val = y2Val;
-
-          didBoardChange = true;
-
-          continue;
-        } else if (y1Val != 0 && y1Val == y2Val) {
-          // merge and move on
-
-          board[x][y1] += y2Val;
-          board[x][y2] = 0;
-
-          didBoardChange = true;
-
-          break;
-        } else if (y1Val != 0 && y1Val != y2Val && Math.abs(y2 - y1) > 1) {
-          // slide down and move on
-
-          board[x][y1 - 1] = y2Val;
-          board[x][y2] = 0;
-
-          didBoardChange = true;
-
-          break;
-        } else if (y1Val != 0 && y1Val != y2Val && Math.abs(y2 - y1) == 1) {
-          // move on
-
-          break;
-        }
-      }
-    }
-  }
-
-  return didBoardChange;
-}
-
-function moveBoardLeft() {
-  // for each column, look down and merge up
-
-  var didBoardChange = false;
-
-  for (var y = 0; y < board[0].length; y++) {
-    for (var x1 = 0; x1 < board.length - 1; x1++) {
-      var x1Val = board[x1][y];
-
-      for (var x2 = x1 + 1; x2 < board.length; x2++) {
-        var x2Val = board[x2][y];
-
-        if (x2Val == 0) {
-          // keep searching
-
-          continue;
-        } else if (x1Val == 0 && x2Val != 0) {
-          // slide up and keep searching
-
-          board[x1][y] = x2Val;
-          board[x2][y] = 0;
-
-          x1Val = x2Val;
-
-          didBoardChange = true;
-
-          continue;
-        } else if (x1Val != 0 && x1Val == x2Val) {
-          // merge and move on
-
-          board[x1][y] += x2Val;
-          board[x2][y] = 0;
-
-          didBoardChange = true;
-
-          break;
-        } else if (x1Val != 0 && x1Val != x2Val && Math.abs(x2 - x1) > 1) {
-          // slide up and move on
-
-          board[x1 + 1][y] = x2Val;
-          board[x2][y] = 0;
-
-          didBoardChange = true;
-
-          break;
-        } else if (x1Val != 0 && x1Val != x2Val && Math.abs(x2 - x1) == 1) {
-          // move on
-
-          break;
-        }
-      }
-    }
-  }
-
-  return didBoardChange;
-}
-
-function moveBoardRight() {
-  // for each column, look down and merge up
-
-  var didBoardChange = false;
-
-  for (var y = 0; y < board[board.length - 1].length; y++) {
-    for (var x1 = board.length - 1; x1 > 0; x1--) {
-      var x1Val = board[x1][y];
-
-      for (var x2 = x1 - 1; x2 >= 0; x2--) {
-        var x2Val = board[x2][y];
-
-        if (x2Val == 0) {
-          // keep searching
-
-          continue;
-        } else if (x1Val == 0 && x2Val != 0) {
-          // slide down and keep searching
-
-          board[x1][y] = x2Val;
-          board[x2][y] = 0;
-
-          x1Val = x2Val;
-
-          didBoardChange = true;
-
-          continue;
-        } else if (x1Val != 0 && x1Val == x2Val) {
-          // merge and move on
-
-          board[x1][y] += x2Val;
-          board[x2][y] = 0;
-
-          didBoardChange = true;
-
-          break;
-        } else if (x1Val != 0 && x1Val != x2Val && Math.abs(x2 - x1) > 1) {
-          // slide down and move on
-
-          board[x1 - 1][y] = x2Val;
-          board[x2][y] = 0;
-
-          didBoardChange = true;
-
-          break;
-        } else if (x1Val != 0 && x1Val != x2Val && Math.abs(x2 - x1) == 1) {
-          // move on
-
-          break;
-        }
-      }
-    }
-  }
-
-  return didBoardChange;
 }
 
 function updateGameStatus() {
-  $("#turncount").text("Turns: " + turnCount);
+  $("#turncount").text("Turns: " + game.turnCount);
 
   updateGrid();
+
+  //TODO is game won or over?
 }
 
 
 function updateGrid() {
-  for (var x = 0; x < board.length; x++) {
-    for (var y = 0; y < board[x].length; y++) {
-      if (board[x][y] > 0) {
-        $("#cell" + "-" + x + "-" + y).text(board[x][y]);
+  for (var x = 0; x < game.boardSize; x++) {
+    for (var y = 0; y < game.boardSize; y++) {
+      if (game.GetCellVal(x, y) > 0) {
+        $("#cell" + "-" + x + "-" + y).text(game.GetCellVal(x, y));
       } else {
         $("#cell" + "-" + x + "-" + y).html("&nbsp;");
       }
