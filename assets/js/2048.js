@@ -89,24 +89,24 @@ function keyboardHandler(event) {
 
   switch (event.code) {
     case "ArrowUp":
-      didBoardChange = game.MoveUp();
+      didBoardChange = game.MoveUp(1);
 
       break;
     case "ArrowDown":
-      didBoardChange = game.MoveDown();
+      didBoardChange = game.MoveDown(1);
 
       break;
     case "ArrowLeft":
-      didBoardChange = game.MoveLeft();
+      didBoardChange = game.MoveLeft(1);
 
       break;
     case "ArrowRight":
-      didBoardChange = game.MoveRight();
+      didBoardChange = game.MoveRight(1);
 
       break;
   }
 
-  if (didBoardChange && game.AddRandos(1)) {
+  if (didBoardChange) {
     updateGameStatus();
   }
 }

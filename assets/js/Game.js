@@ -18,6 +18,7 @@ Game = function (boardSize, numRandos) {
   // highest number on the board
   this.maxCell = 0;
 
+
   // privileged ////////////////////////////
 
   this.IsGameOver = function () {
@@ -51,6 +52,7 @@ Game = function (boardSize, numRandos) {
     return true;
   }
 
+
   // init //////////////////////////////////
 
   this.board = new Array(this.boardSize);
@@ -62,7 +64,7 @@ Game = function (boardSize, numRandos) {
     }
   }
 
-  this.AddRandos(numRandos);
+  this._AddRandos(numRandos);
 };
 
 // Game.prototype.DIRECTION = {
@@ -76,7 +78,7 @@ Game.prototype._IsValidCell = function (x, y) {
   return x >= 0 && y >= 0 && x < this.boardSize && y < this.boardSize;
 };
 
-Game.prototype.SetCellVal = function (x, y, val) {
+Game.prototype._SetCellVal = function (x, y, val) {
   if (!this._IsValidCell(x, y)) {
     return false;
   }
@@ -97,12 +99,12 @@ Game.prototype.GetCellVal = function (x, y) {
   return -1;
 };
 
-Game.prototype.AddRandos = function (count) {
-  if (this.IsGameOver() || count > this.numFree) {
+Game.prototype._AddRandos = function (count) {
+  if (this.IsGameOver()) {
     return false;
   }
 
-  for (var i = 0; i < count; i++) {
+  for (var i = 0; i < Math.min(count, this.numFree); i++) {
     // pick a 2 or a 4, but pick 2 more often than 4
     var newCellVal = Math.pow(2, Math.round(Math.random() * 0.65 + 1));
 
@@ -113,279 +115,239 @@ Game.prototype.AddRandos = function (count) {
       y = Math.floor(Math.random() * this.boardSize);
     } while (this.GetCellVal(x, y) > 0)
 
-    this.SetCellVal(x, y, newCellVal);
+    this._SetCellVal(x, y, newCellVal);
 
-    this.maxCell = Math.max(this.maxCell, newCellVal);
     this.numFree--;
   }
 
   return true;
 };
 
-Game.prototype.MoveUp = function () {
+Game.prototype.MoveUp = function (numRandos) {
   if (this.IsGameOver()) {
     return false;
   }
 
-  // for each column, look down and merge up
-
   var didBoardChange = false;
 
+  // for each column, look down and merge up
   for (var x = 0; x < this.boardSize; x++) {
-    for (var y1 = 0; y1 < this.boardSize - 1; y1++) {
-      var y1Val = this.board[x][y1];
+    // target index to slide to
+    var t = 0;
 
-      for (var y2 = y1 + 1; y2 < this.boardSize; y2++) {
-        var y2Val = this.board[x][y2];
+    for (var y = t + 1; y < this.boardSize; y++) {
+      var tVal = this.board[x][t];
+      var yVal = this.board[x][y];
 
-        if (y2Val == 0) {
-          // keep searching
-
-          continue;
-        } else if (y1Val == 0 && y2Val != 0) {
-          // slide and keep searching
-
-          this.SetCellVal(x, y1, y2Val);
-          this.SetCellVal(x, y2, 0);
-
-          y1Val = y2Val;
+      if (yVal > 0) {
+        if (tVal == 0) {
+          this._SetCellVal(x, t, yVal);
+          this._SetCellVal(x, y, 0);
 
           didBoardChange = true;
+        } else if (tVal == yVal) {
+          this._SetCellVal(x, t, tVal + yVal);
+          this._SetCellVal(x, y, 0);
 
-          continue;
-        } else if (y1Val != 0 && y1Val == y2Val) {
-          // merge and move on
-
-          this.SetCellVal(x, y1, y1Val + y2Val);
-          this.SetCellVal(x, y2, 0);
+          t++;
 
           this.numFree++;
-
           didBoardChange = true;
+        } else { // tVal != yVal
+          t++;
 
-          break;
-        } else if (y1Val != 0 && y1Val != y2Val && Math.abs(y2 - y1) > 1) {
-          // slide and move on
+          if (y > t) {
+            this._SetCellVal(x, t, yVal);
+            this._SetCellVal(x, y, 0);
 
-          this.SetCellVal(x, y1 + 1, y2Val);
-          this.SetCellVal(x, y2, 0);
-
-          didBoardChange = true;
-
-          break;
-        } else if (y1Val != 0 && y1Val != y2Val && Math.abs(y2 - y1) == 1) {
-          // move on
-
-          break;
+            didBoardChange = true;
+          }
         }
       }
     }
   }
 
   if (didBoardChange) {
+    game._AddRandos(numRandos);
+
     this.turnCount++;
+
+    return true;
   }
 
-  return didBoardChange;
+  return false;
 };
 
-Game.prototype.MoveDown = function () {
+Game.prototype.MoveDown = function (numRandos) {
   if (this.IsGameOver()) {
     return false;
   }
 
-  // for each column, look down and merge up
-
   var didBoardChange = false;
 
+  // for each column, look up and merge down
   for (var x = 0; x < this.boardSize; x++) {
-    for (var y1 = this.boardSize - 1; y1 > 0; y1--) {
-      var y1Val = this.board[x][y1];
+    // target index to slide to
+    var t = this.boardSize - 1;
 
-      for (var y2 = y1 - 1; y2 >= 0; y2--) {
-        var y2Val = this.board[x][y2];
+    for (var y = t - 1; y >= 0; y--) {
+      var tVal = this.board[x][t];
+      var yVal = this.board[x][y];
 
-        if (y2Val == 0) {
-          // keep searching
-
-          continue;
-        } else if (y1Val == 0 && y2Val != 0) {
-          // slide and keep searching
-
-          this.SetCellVal(x, y1, y2Val);
-          this.SetCellVal(x, y2, 0);
-
-          y1Val = y2Val;
+      if (yVal > 0) {
+        if (tVal == 0) {
+          this._SetCellVal(x, t, yVal);
+          this._SetCellVal(x, y, 0);
 
           didBoardChange = true;
+        } else if (tVal == yVal) {
+          this._SetCellVal(x, t, tVal + yVal);
+          this._SetCellVal(x, y, 0);
 
-          continue;
-        } else if (y1Val != 0 && y1Val == y2Val) {
-          // merge and move on
-
-          this.SetCellVal(x, y1, y1Val + y2Val);
-          this.SetCellVal(x, y2, 0);
+          t--;
 
           this.numFree++;
-
           didBoardChange = true;
+        } else { // tVal != yVal
+          t--;
 
-          break;
-        } else if (y1Val != 0 && y1Val != y2Val && Math.abs(y2 - y1) > 1) {
-          // slide and move on
+          if (y < t) {
+            this._SetCellVal(x, t, yVal);
+            this._SetCellVal(x, y, 0);
 
-          this.SetCellVal(x, y1 - 1, y2Val);
-          this.SetCellVal(x, y2, 0);
-
-          didBoardChange = true;
-
-          break;
-        } else if (y1Val != 0 && y1Val != y2Val && Math.abs(y2 - y1) == 1) {
-          // move on
-
-          break;
+            didBoardChange = true;
+          }
         }
       }
     }
   }
 
   if (didBoardChange) {
+    game._AddRandos(numRandos);
+
     this.turnCount++;
+
+    return true;
   }
 
-  return didBoardChange;
+  return false;
 };
 
-Game.prototype.MoveLeft = function () {
+Game.prototype.MoveLeft = function (numRandos) {
   if (this.IsGameOver()) {
     return false;
   }
 
-  // for each column, look down and merge up
-
   var didBoardChange = false;
 
+  // for each column, look right and merge left
   for (var y = 0; y < this.boardSize; y++) {
-    for (var x1 = 0; x1 < this.boardSize - 1; x1++) {
-      var x1Val = this.board[x1][y];
+    // target index to slide to
+    var t = 0;
 
-      for (var x2 = x1 + 1; x2 < this.boardSize; x2++) {
-        var x2Val = this.board[x2][y];
+    for (var x = t + 1; x < this.boardSize; x++) {
+      var tVal = this.board[t][y];
+      var xVal = this.board[x][y];
 
-        if (x2Val == 0) {
-          // keep searching
-
-          continue;
-        } else if (x1Val == 0 && x2Val != 0) {
-          // slide and keep searching
-
-          this.SetCellVal(x1, y, x2Val);
-          this.SetCellVal(x2, y, 0);
-
-          x1Val = x2Val;
+      if (xVal > 0) {
+        if (tVal == 0) {
+          this._SetCellVal(t, y, xVal);
+          this._SetCellVal(x, y, 0);
 
           didBoardChange = true;
+        } else if (tVal == xVal) {
+          this._SetCellVal(t, y, tVal + xVal);
+          this._SetCellVal(x, y, 0);
 
-          continue;
-        } else if (x1Val != 0 && x1Val == x2Val) {
-          // merge and move on
-
-          this.SetCellVal(x1, y, x1Val + x2Val);
-          this.SetCellVal(x2, y, 0);
+          t++;
 
           this.numFree++;
-
           didBoardChange = true;
+        } else { // tVal != xVal
+          t++;
 
-          break;
-        } else if (x1Val != 0 && x1Val != x2Val && Math.abs(x2 - x1) > 1) {
-          // slide and move on
+          if (x > t) {
+            this._SetCellVal(t, y, xVal);
+            this._SetCellVal(x, y, 0);
 
-          this.SetCellVal(x1 + 1, y, x2Val);
-          this.SetCellVal(x2, y, 0);
-
-          didBoardChange = true;
-
-          break;
-        } else if (x1Val != 0 && x1Val != x2Val && Math.abs(x2 - x1) == 1) {
-          // move on
-
-          break;
+            didBoardChange = true;
+          }
         }
       }
     }
   }
 
   if (didBoardChange) {
+    game._AddRandos(numRandos);
+
     this.turnCount++;
+
+    return true;
   }
 
-  return didBoardChange;
+  return false;
 };
 
-Game.prototype.MoveRight = function () {
+Game.prototype.MoveRight = function (numRandos) {
   if (this.IsGameOver()) {
     return false;
   }
 
-  // for each column, look down and merge up
-
   var didBoardChange = false;
 
+  // for each column, look left and merge right
   for (var y = 0; y < this.boardSize; y++) {
-    for (var x1 = this.boardSize - 1; x1 > 0; x1--) {
-      var x1Val = this.board[x1][y];
+    // target index to slide to
+    var t = this.boardSize - 1;
 
-      for (var x2 = x1 - 1; x2 >= 0; x2--) {
-        var x2Val = this.board[x2][y];
+    for (var x = t - 1; x >= 0; x--) {
+      var tVal = this.board[t][y];
+      var xVal = this.board[x][y];
 
-        if (x2Val == 0) {
-          // keep searching
-
-          continue;
-        } else if (x1Val == 0 && x2Val != 0) {
-          // slide and keep searching
-
-          this.SetCellVal(x1, y, x2Val);
-          this.SetCellVal(x2, y, 0);
-
-          x1Val = x2Val;
+      if (xVal > 0) {
+        if (tVal == 0) {
+          this._SetCellVal(t, y, xVal);
+          this._SetCellVal(x, y, 0);
 
           didBoardChange = true;
+        } else if (tVal == xVal) {
+          this._SetCellVal(t, y, tVal + xVal);
+          this._SetCellVal(x, y, 0);
 
-          continue;
-        } else if (x1Val != 0 && x1Val == x2Val) {
-          // merge and move on
-
-          this.SetCellVal(x1, y, x1Val + x2Val);
-          this.SetCellVal(x2, y, 0);
+          t--;
 
           this.numFree++;
-
           didBoardChange = true;
+        } else { // tVal != xVal
+          t--;
 
-          break;
-        } else if (x1Val != 0 && x1Val != x2Val && Math.abs(x2 - x1) > 1) {
-          // slide and move on
+          if (x < t) {
+            this._SetCellVal(t, y, xVal);
+            this._SetCellVal(x, y, 0);
 
-          this.SetCellVal(x1 - 1, y, x2Val);
-          this.SetCellVal(x2, y, 0);
-
-          didBoardChange = true;
-
-          break;
-        } else if (x1Val != 0 && x1Val != x2Val && Math.abs(x2 - x1) == 1) {
-          // move on
-
-          break;
+            didBoardChange = true;
+          }
         }
       }
     }
   }
 
   if (didBoardChange) {
+    game._AddRandos(numRandos);
+
     this.turnCount++;
+
+    return true;
   }
 
-  return didBoardChange;
+  return false;
 };
+
+// Game.prototype._RecordMoveChange(arr, oldX, oldY, newX, newY) {
+//   arr.push({
+//     oldX,
+//     oldY,
+//     newX,
+//     newY
+//   });
+// }
