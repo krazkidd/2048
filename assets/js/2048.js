@@ -86,6 +86,7 @@ function initGrid() {
 
 // implements the game logic
 function keyboardHandler(event) {
+  //TODO how much of this should be wrapped in a setTimeout()?
   if (game.IsGameOver()) {
     return;
   }
@@ -161,13 +162,20 @@ function updateGrid() {
 }
 
 function updateGameStatus() {
-  $("#turncount").text("Turns: " + game.turnCount);
+  $("#score").text("Score: " + game.score);
 
   if (!isGameOverChanged) {
     if (game.maxCell == 2048) {
       // show win state
 
       window.alert("You win!");
+
+      // only show once
+      isGameOverChanged = true;
+    } else if (game.score == 131070) {
+      // show super win state
+
+      window.alert("You win! You, like, really won. Don't come back.");
 
       // only show once
       isGameOverChanged = true;

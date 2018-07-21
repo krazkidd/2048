@@ -30,6 +30,7 @@ Game = function (boardSize, numRandos) {
   this.boardSize = boardSize;
 
   this.turnCount = 0;
+  this.score = 0
 
   // number of free spaces
   this.numFree = boardSize * boardSize;
@@ -178,6 +179,7 @@ Game.prototype.MoveUp = function (numRandos) {
           this._RecordMoveChange(moves, x, y, x, t);
 
           this.numFree++;
+          this.score += tVal + yVal;
 
           t++;
         } else { // tVal != yVal
@@ -241,6 +243,7 @@ Game.prototype.MoveDown = function (numRandos) {
           this._RecordMoveChange(moves, x, y, x, t);
 
           this.numFree++;
+          this.score += tVal + yVal;
 
           t--;
         } else { // tVal != yVal
@@ -304,6 +307,7 @@ Game.prototype.MoveLeft = function (numRandos) {
           this._RecordMoveChange(moves, x, y, t, y);
 
           this.numFree++;
+          this.score += tVal + xVal;
 
           t++;
         } else { // tVal != xVal
@@ -367,6 +371,7 @@ Game.prototype.MoveRight = function (numRandos) {
           this._RecordMoveChange(moves, x, y, t, y);
 
           this.numFree++;
+          this.score += tVal + xVal;
 
           t--;
         } else { // tVal != xVal
