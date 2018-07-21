@@ -22,7 +22,7 @@ var ANIMATION_DURATION = 80;
 
 var game;
 
-var isGameOverChanged = false;
+var isFirst2048 = false;
 
 // $(document).ready()...
 $(function () {
@@ -164,28 +164,24 @@ function updateGrid() {
 function updateGameStatus() {
   $("#score").text("Score: " + game.score);
 
-  if (!isGameOverChanged) {
-    if (game.maxCell == 2048) {
-      // show win state
+  if (game.maxCell >= 2048 && !isFirst2048) {
+    // show win state
 
-      window.alert("You win!");
+    window.alert("You won!");
 
-      // only show once
-      isGameOverChanged = true;
-    } else if (game.score == 131070) {
-      // show super win state
+    // only show once
+    isFirst2048 = true;
+  } else if (game.score >= 131070) {
+    // show super win state
 
-      window.alert("You win! You, like, really won. Don't come back.");
+    window.alert("You won! You, like, really won. Don't come back.");
+  } else if (game.IsGameOver() && !isFirst2048) {
+    // show lose state
 
-      // only show once
-      isGameOverChanged = true;
-    } else if (game.maxCell < 2048 && game.IsGameOver()) {
-      // show lose state
+    window.alert("You lost!");
+  } else if (game.IsGameOver() && isFirst2048) {
+    // show game over state
 
-      window.alert("You lose!");
-
-      // only show once
-      isGameOverChanged = true;
-    }
+    window.alert("Game over!");
   }
 }
