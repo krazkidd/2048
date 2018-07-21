@@ -18,6 +18,8 @@
 
 // NOTE: Sorry, no namespace.
 
+var ANIMATION_DURATION = 80;
+
 var game;
 
 var isGameOverChanged = false;
@@ -47,6 +49,8 @@ function resetGame() {
 
   initGrid();
 
+  //TODO animate board initialization?
+  updateGrid();
   updateGameStatus();
 }
 
@@ -74,6 +78,7 @@ function initGrid() {
         .attr("class", "cell")
         .outerWidth(cellSize - 10)
         .outerHeight(cellSize - 10)
+        .append("<span/>")
         .appendTo(row);
     }
   }
@@ -85,36 +90,78 @@ function keyboardHandler(event) {
     return;
   }
 
-  var didBoardChange = false;
+  var moves = null;
 
   switch (event.code) {
     case "ArrowUp":
-      didBoardChange = game.MoveUp(1);
+      moves = game.MoveUp(1);
 
       break;
     case "ArrowDown":
-      didBoardChange = game.MoveDown(1);
+      moves = game.MoveDown(1);
 
       break;
     case "ArrowLeft":
-      didBoardChange = game.MoveLeft(1);
+      moves = game.MoveLeft(1);
 
       break;
     case "ArrowRight":
-      didBoardChange = game.MoveRight(1);
+      moves = game.MoveRight(1);
 
       break;
   }
 
-  if (didBoardChange) {
+  if (moves && moves.length > 0) {
+    animateMoves(moves);
+
     updateGameStatus();
+  }
+}
+
+function animateMoves(moves) {
+  $all = $("#grid div").children("span");
+
+  // jump animations from previous turn to their end state
+  $all.finish();
+
+  // when that is done, hide all the cells that are changing
+  $all.promise().done(function () {
+    moves.forEach(function (move) {
+      // NOTE: We might restart the animation with the same duration, but this
+      //       will only affect newly spawned tiles taking over a vacated spot.
+      //       If this loop is fast, we'll never notice.
+
+      // i guess stop (and continue) any running animations, too
+      $("#cell" + "-" + move.oldX + "-" + move.oldY).children("span").stop().fadeOut(ANIMATION_DURATION);
+      $("#cell" + "-" + move.newX + "-" + move.newY).children("span").stop().fadeOut(ANIMATION_DURATION);
+    });
+  });
+
+  // and when that is done, update the grid and
+  // bring it all down to funky town
+  $all.promise().done(function () {
+    updateGrid();
+
+    $all.fadeIn(ANIMATION_DURATION);
+  });
+}
+
+function updateGrid() {
+  for (var x = 0; x < game.boardSize; x++) {
+    for (var y = 0; y < game.boardSize; y++) {
+      var $cell = $("#cell" + "-" + x + "-" + y).children("span");
+
+      if (game.GetCellVal(x, y) > 0) {
+        $cell.text(game.GetCellVal(x, y));
+      } else {
+        $cell.html("&nbsp;");
+      }
+    }
   }
 }
 
 function updateGameStatus() {
   $("#turncount").text("Turns: " + game.turnCount);
-
-  updateGrid();
 
   if (!isGameOverChanged) {
     if (game.maxCell == 2048) {
@@ -131,19 +178,6 @@ function updateGameStatus() {
 
       // only show once
       isGameOverChanged = true;
-    }
-  }
-}
-
-
-function updateGrid() {
-  for (var x = 0; x < game.boardSize; x++) {
-    for (var y = 0; y < game.boardSize; y++) {
-      if (game.GetCellVal(x, y) > 0) {
-        $("#cell" + "-" + x + "-" + y).text(game.GetCellVal(x, y));
-      } else {
-        $("#cell" + "-" + x + "-" + y).html("&nbsp;");
-      }
     }
   }
 }

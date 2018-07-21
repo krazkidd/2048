@@ -119,8 +119,10 @@ Game.prototype.GetCellVal = function (x, y) {
 
 Game.prototype._AddRandos = function (count) {
   if (this.IsGameOver()) {
-    return false;
+    return null;
   }
+
+  var created = new Array();
 
   for (var i = 0; i < Math.min(count, this.numFree); i++) {
     // pick a 2 or a 4, but pick 2 more often than 4
@@ -135,18 +137,20 @@ Game.prototype._AddRandos = function (count) {
 
     this._SetCellVal(x, y, newCellVal);
 
+    this._RecordMoveChange(created, x, y, x, y);
+
     this.numFree--;
   }
 
-  return true;
+  return created;
 };
 
 Game.prototype.MoveUp = function (numRandos) {
   if (this.IsGameOver()) {
-    return false;
+    return null;
   }
 
-  var didBoardChange = false;
+  var moves = new Array();
 
   // for each column, look down and merge up
   for (var x = 0; x < this.boardSize; x++) {
@@ -159,49 +163,57 @@ Game.prototype.MoveUp = function (numRandos) {
 
       if (yVal > 0) {
         if (tVal == 0) {
+          // slide into free space
+
           this._SetCellVal(x, t, yVal);
           this._SetCellVal(x, y, 0);
 
-          didBoardChange = true;
+          this._RecordMoveChange(moves, x, y, x, t);
         } else if (tVal == yVal) {
+          // merge
+
           this._SetCellVal(x, t, tVal + yVal);
           this._SetCellVal(x, y, 0);
 
-          t++;
+          this._RecordMoveChange(moves, x, y, x, t);
 
           this.numFree++;
-          didBoardChange = true;
+
+          t++;
         } else { // tVal != yVal
+          // can't merge; move target
+
           t++;
 
-          if (y > t) {
+          if (y != t) {
+            // we can infer every space between the old target and
+            // the current index is free, so slide to new target
+
             this._SetCellVal(x, t, yVal);
             this._SetCellVal(x, y, 0);
 
-            didBoardChange = true;
+            this._RecordMoveChange(moves, x, y, x, t);
           }
         }
       }
     }
   }
 
-  if (didBoardChange) {
-    game._AddRandos(numRandos);
+  if (moves.length > 0) {
+    moves.concat(game._AddRandos(numRandos));
 
     this.turnCount++;
-
-    return true;
   }
 
-  return false;
+  return moves;
 };
 
 Game.prototype.MoveDown = function (numRandos) {
   if (this.IsGameOver()) {
-    return false;
+    return null;
   }
 
-  var didBoardChange = false;
+  var moves = new Array();
 
   // for each column, look up and merge down
   for (var x = 0; x < this.boardSize; x++) {
@@ -214,49 +226,57 @@ Game.prototype.MoveDown = function (numRandos) {
 
       if (yVal > 0) {
         if (tVal == 0) {
+          // slide into free space
+
           this._SetCellVal(x, t, yVal);
           this._SetCellVal(x, y, 0);
 
-          didBoardChange = true;
+          this._RecordMoveChange(moves, x, y, x, t);
         } else if (tVal == yVal) {
+          // merge
+
           this._SetCellVal(x, t, tVal + yVal);
           this._SetCellVal(x, y, 0);
 
-          t--;
+          this._RecordMoveChange(moves, x, y, x, t);
 
           this.numFree++;
-          didBoardChange = true;
+
+          t--;
         } else { // tVal != yVal
+          // can't merge; move target
+
           t--;
 
-          if (y < t) {
+          if (y != t) {
+            // we can infer every space between the old target and
+            // the current index is free, so slide to new target
+
             this._SetCellVal(x, t, yVal);
             this._SetCellVal(x, y, 0);
 
-            didBoardChange = true;
+            this._RecordMoveChange(moves, x, y, x, t);
           }
         }
       }
     }
   }
 
-  if (didBoardChange) {
-    game._AddRandos(numRandos);
+  if (moves.length > 0) {
+    moves.concat(game._AddRandos(numRandos));
 
     this.turnCount++;
-
-    return true;
   }
 
-  return false;
+  return moves;
 };
 
 Game.prototype.MoveLeft = function (numRandos) {
   if (this.IsGameOver()) {
-    return false;
+    return null;
   }
 
-  var didBoardChange = false;
+  var moves = new Array();
 
   // for each column, look right and merge left
   for (var y = 0; y < this.boardSize; y++) {
@@ -269,49 +289,57 @@ Game.prototype.MoveLeft = function (numRandos) {
 
       if (xVal > 0) {
         if (tVal == 0) {
+          // slide into free space
+
           this._SetCellVal(t, y, xVal);
           this._SetCellVal(x, y, 0);
 
-          didBoardChange = true;
+          this._RecordMoveChange(moves, x, y, t, y);
         } else if (tVal == xVal) {
+          // merge
+
           this._SetCellVal(t, y, tVal + xVal);
           this._SetCellVal(x, y, 0);
 
-          t++;
+          this._RecordMoveChange(moves, x, y, t, y);
 
           this.numFree++;
-          didBoardChange = true;
+
+          t++;
         } else { // tVal != xVal
+          // can't merge; move target
+
           t++;
 
-          if (x > t) {
+          if (x != t) {
+            // we can infer every space between the old target and
+            // the current index is free, so slide to new target
+
             this._SetCellVal(t, y, xVal);
             this._SetCellVal(x, y, 0);
 
-            didBoardChange = true;
+            this._RecordMoveChange(moves, x, y, t, y);
           }
         }
       }
     }
   }
 
-  if (didBoardChange) {
-    game._AddRandos(numRandos);
+  if (moves.length > 0) {
+    moves.concat(game._AddRandos(numRandos));
 
     this.turnCount++;
-
-    return true;
   }
 
-  return false;
+  return moves;
 };
 
 Game.prototype.MoveRight = function (numRandos) {
   if (this.IsGameOver()) {
-    return false;
+    return null;
   }
 
-  var didBoardChange = false;
+  var moves = new Array();
 
   // for each column, look left and merge right
   for (var y = 0; y < this.boardSize; y++) {
@@ -324,48 +352,56 @@ Game.prototype.MoveRight = function (numRandos) {
 
       if (xVal > 0) {
         if (tVal == 0) {
+          // slide into free space
+
           this._SetCellVal(t, y, xVal);
           this._SetCellVal(x, y, 0);
 
-          didBoardChange = true;
+          this._RecordMoveChange(moves, x, y, t, y);
         } else if (tVal == xVal) {
+          // merge
+
           this._SetCellVal(t, y, tVal + xVal);
           this._SetCellVal(x, y, 0);
 
-          t--;
+          this._RecordMoveChange(moves, x, y, t, y);
 
           this.numFree++;
-          didBoardChange = true;
+
+          t--;
         } else { // tVal != xVal
+          // can't merge; move target
+
           t--;
 
-          if (x < t) {
+          if (x != t) {
+            // we can infer every space between the old target and
+            // the current index is free, so slide to new target
+
             this._SetCellVal(t, y, xVal);
             this._SetCellVal(x, y, 0);
 
-            didBoardChange = true;
+            this._RecordMoveChange(moves, x, y, t, y);
           }
         }
       }
     }
   }
 
-  if (didBoardChange) {
-    game._AddRandos(numRandos);
+  if (moves.length > 0) {
+    moves.concat(game._AddRandos(numRandos));
 
     this.turnCount++;
-
-    return true;
   }
 
-  return false;
+  return moves;
 };
 
-// Game.prototype._RecordMoveChange(arr, oldX, oldY, newX, newY) {
-//   arr.push({
-//     oldX,
-//     oldY,
-//     newX,
-//     newY
-//   });
-// }
+Game.prototype._RecordMoveChange = function (arr, oldX, oldY, newX, newY) {
+  arr.push({
+    oldX,
+    oldY,
+    newX,
+    newY
+  });
+};
