@@ -9,7 +9,7 @@ footer {
 
 .github-logo {
   background-image: url('../images/github-mark.svg');
-  background-position: center center;
+  background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
   display: inline-block;

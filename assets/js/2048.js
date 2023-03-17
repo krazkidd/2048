@@ -54,13 +54,13 @@ function initGrid() {
   for (var y = 0; y < game.boardSize; y++) {
     // create row
     var row = $("<div>")
-      .attr("class", "game-row")
+      .addClass("game-row")
       .appendTo($game);
 
     for (var x = 0; x < game.boardSize; x++) {
       var cell = $("<div>")
         .attr("id", "game-cell" + "-" + x + "-" + y)
-        .attr("class", "game-cell")
+        .addClass("game-cell")
         .append("<span>")
         .appendTo(row);
     }
@@ -103,7 +103,7 @@ function keyboardHandler(event) {
 }
 
 function animateMoves(moves) {
-  $all = $("#game div").children("span");
+  $all = $("#game .game-cell").children("span");
 
   // jump animations from previous turn to their end state
   $all.finish();
