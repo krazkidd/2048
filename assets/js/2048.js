@@ -16,8 +16,6 @@
 // along with 204∞.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// NOTE: Sorry, no namespace.
-
 var ANIMATION_DURATION = 80;
 
 var game;
@@ -26,15 +24,10 @@ var isFirst2048 = false;
 
 // $(document).ready()...
 $(function () {
-  init();
-});
-
-// initialize the page
-function init() {
   resetGame();
 
   // reset button handler
-  $("button[name='reset']").on("click", function() {
+  $("#reset").on("click", function() {
     resetGame();
 
     $(this).blur();
@@ -42,7 +35,7 @@ function init() {
 
   // game board handler
    document.addEventListener('keyup', keyboardHandler);
-}
+});
 
 function resetGame() {
   game = new Game(4, 2);
@@ -56,29 +49,19 @@ function resetGame() {
 
 // build the grid
 function initGrid() {
-  $("#game").empty();
-
-  $("<div/>")
-    .attr("id", "grid")
-    .appendTo("#game");
+  var $game = $("#game").empty();
 
   for (var y = 0; y < game.boardSize; y++) {
     // create row
-    var row = $("<div/>")
-      .attr("class", "row")
-      .height(Math.floor($("#grid").height() / game.boardSize))
-      .appendTo("#grid");
+    var row = $("<div>")
+      .attr("class", "game-row")
+      .appendTo($game);
 
     for (var x = 0; x < game.boardSize; x++) {
-      // create cell
-      var cellSize = Math.floor(Number(row.width()) / game.boardSize);
-
-      var cell = $("<div/>")
-        .attr("id", "cell" + "-" + x + "-" + y)
-        .attr("class", "cell")
-        .outerWidth(cellSize - 10)
-        .outerHeight(cellSize - 10)
-        .append("<span/>")
+      var cell = $("<div>")
+        .attr("id", "game-cell" + "-" + x + "-" + y)
+        .attr("class", "game-cell")
+        .append("<span>")
         .appendTo(row);
     }
   }
@@ -120,7 +103,7 @@ function keyboardHandler(event) {
 }
 
 function animateMoves(moves) {
-  $all = $("#grid div").children("span");
+  $all = $("#game div").children("span");
 
   // jump animations from previous turn to their end state
   $all.finish();
@@ -133,8 +116,8 @@ function animateMoves(moves) {
       //       If this loop is fast, we'll never notice.
 
       // i guess stop (and continue) any running animations, too
-      $("#cell" + "-" + move.oldX + "-" + move.oldY).children("span").stop().fadeOut(ANIMATION_DURATION);
-      $("#cell" + "-" + move.newX + "-" + move.newY).children("span").stop().fadeOut(ANIMATION_DURATION);
+      $("#game-cell" + "-" + move.oldX + "-" + move.oldY).children("span").stop().fadeOut(ANIMATION_DURATION);
+      $("#game-cell" + "-" + move.newX + "-" + move.newY).children("span").stop().fadeOut(ANIMATION_DURATION);
     });
   });
 
@@ -150,7 +133,7 @@ function animateMoves(moves) {
 function updateGrid() {
   for (var x = 0; x < game.boardSize; x++) {
     for (var y = 0; y < game.boardSize; y++) {
-      var $cell = $("#cell" + "-" + x + "-" + y).children("span");
+      var $cell = $("#game-cell" + "-" + x + "-" + y).children("span");
 
       if (game.GetCellVal(x, y) > 0) {
         $cell.text(game.GetCellVal(x, y));
@@ -162,7 +145,7 @@ function updateGrid() {
 }
 
 function updateGameStatus() {
-  $("#score").text("Score: " + game.score);
+  $("#score").text(game.score);
 
   if (game.maxCell >= 2048 && !isFirst2048) {
     // show win state

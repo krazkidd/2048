@@ -1,66 +1,44 @@
-body {
-  margin: 20px 0;
-  padding: 0;
-  font-family: sans-serif;
-}
-
-h1 {
-  text-align: center;
-  padding: 0;
-  margin: 0;
-}
-
-#config {
-  margin: 0;
-  width: 30%;
-  min-height: 400px;
-  min-width: 100px;
-  max-width: 300px;
-  float: left;
-  padding: 10px 0;
-  text-align: right;
-  font-size: 1.1em;
-}
-
-#config .license {
+footer {
   font-size: 0.8em;
-}
-
-#game {
-  width: 70%;
-  float: left;
-  padding: 10px 0;
-}
-
-#grid {
-  width: 400px;
-  height: 400px;
-  margin: 0 auto;
-  padding: 0;
-  background-color: #f19d3e;
-}
-
-.row {
-  height: 100px;
-  max-height: 100px;
+  position: absolute;
+  bottom: 0;
   width: 100%;
-  margin: 0;
-  padding: 0;
+  height: 60px;
+  line-height: 60px;
 }
 
-.row .cell {
-  height: 90px;
-  width: 90px;
-  max-height: 90px;
-  max-width: 90px;
-  margin: 5px;
+.github-logo {
+  background-image: url('../images/github-mark.svg');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  display: inline-block;
+  height: 1.5em;
+  width: 1.5em;
+}
+
+#score {
+  font-size: 3em;
+}
+
+.game-board {
+  display: flex;
+  flex-direction: column;
+}
+
+.game-row {
+  display: flex;
+}
+
+.game-cell {
+  text-align: center;
+  width: 25%;
+  max-width: 25%;
+  margin: 0.2em;
   padding: 0;
-  float: left;
   border-radius: 10px;
-  font-size: 24px;
+  font-size: 5em;
   font-weight: bold;
-  margin: 0;
-  box-shadow: none;
   color: #6d3900;
   background-color: #ffc07a;
 }
