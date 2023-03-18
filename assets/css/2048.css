@@ -21,22 +21,12 @@ footer {
   font-size: 3em;
 }
 
-.game-board {
-  display: flex;
-  flex-direction: column;
-}
-
-.game-row {
-  display: flex;
-}
-
 .game-cell {
   text-align: center;
-  width: 25%;
-  max-width: 25%;
   margin: 0.2em;
   padding: 0;
   border-radius: 10px;
+  box-shadow: 3px 3px 2px 2px rgba(0, 0, 0, 0.8);
   font-size: 5em;
   font-weight: bold;
   color: #6d3900;

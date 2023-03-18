@@ -22,19 +22,16 @@ var game;
 
 var isFirst2048 = false;
 
-// $(document).ready()...
 $(function () {
-  resetGame();
-
-  // reset button handler
   $("#reset").on("click", function() {
     resetGame();
 
     $(this).blur();
   });
 
-  // game board handler
-   document.addEventListener('keyup', keyboardHandler);
+  resetGame();
+
+  document.addEventListener('keyup', keyboardHandler);
 });
 
 function resetGame() {
@@ -52,17 +49,20 @@ function initGrid() {
   var $game = $("#game").empty();
 
   for (var y = 0; y < game.boardSize; y++) {
-    // create row
-    var row = $("<div>")
-      .addClass("game-row")
+    var $row = $("<div>")
+      .addClass("row")
       .appendTo($game);
 
     for (var x = 0; x < game.boardSize; x++) {
-      var cell = $("<div>")
+      var $col = $("<div>")
+        .addClass("col")
+        .appendTo($row);
+
+      $("<div>")
         .attr("id", "game-cell" + "-" + x + "-" + y)
         .addClass("game-cell")
         .append("<span>")
-        .appendTo(row);
+        .appendTo($col);
     }
   }
 }
