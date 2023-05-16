@@ -103,6 +103,7 @@ Game = function (boardSize, numRandos) {
     // see if we can merge
     for (let x = 0; x < this.boardSize; x++) {
       for (let y = 0; y < this.boardSize; y++) {
+        if (this._IsValidCell(x, y - 1) && this.board[x][y] == this.board[x][y - 1]) {
           return false;
         } else if (this._IsValidCell(x, y + 1) && this.board[x][y] == this.board[x][y + 1]) {
           return false;
