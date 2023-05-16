@@ -47,7 +47,7 @@ Game = function (boardSize, numRandos) {
    * once we've reached the end game.
    * @type {boolean}
    */
-  var isGameOver = false;
+  let isGameOver = false;
 
   // public ////////////////////////////////
 
@@ -101,9 +101,8 @@ Game = function (boardSize, numRandos) {
     }
 
     // see if we can merge
-    for (var x = 0; x < this.boardSize; x++) {
-      for (var y = 0; y < this.boardSize; y++) {
-        if (this._IsValidCell(x, y - 1) && this.board[x][y] == this.board[x][y - 1]) {
+    for (let x = 0; x < this.boardSize; x++) {
+      for (let y = 0; y < this.boardSize; y++) {
           return false;
         } else if (this._IsValidCell(x, y + 1) && this.board[x][y] == this.board[x][y + 1]) {
           return false;
@@ -123,10 +122,10 @@ Game = function (boardSize, numRandos) {
   // init //////////////////////////////////
 
   this.board = new Array(this.boardSize);
-  for (var x = 0; x < this.boardSize; x++) {
+  for (let x = 0; x < this.boardSize; x++) {
     this.board[x] = new Array(this.boardSize);
 
-    for (var y = 0; y < this.boardSize; y++) {
+    for (let y = 0; y < this.boardSize; y++) {
       this.board[x][y] = 0;
     }
   }
@@ -207,13 +206,13 @@ Game.prototype._AddRandos = function (count) {
     return null;
   }
 
-  var created = new Array();
+  const created = new Array();
 
-  for (var i = 0; i < Math.min(count, this.numFree); i++) {
+  for (let i = 0; i < Math.min(count, this.numFree); i++) {
     // pick a 2 or a 4, but pick 2 more often than 4
-    var newCellVal = Math.pow(2, Math.round(Math.random() * 0.65 + 1));
+    const newCellVal = Math.pow(2, Math.round(Math.random() * 0.65 + 1));
 
-    var x, y;
+    let x, y;
 
     do {
       x = Math.floor(Math.random() * this.boardSize);
@@ -242,16 +241,16 @@ Game.prototype.MoveUp = function (numRandos) {
     return null;
   }
 
-  var moves = new Array();
+  const moves = new Array();
 
   // for each column, look down and merge up
-  for (var x = 0; x < this.boardSize; x++) {
+  for (let x = 0; x < this.boardSize; x++) {
     // target index to slide to
-    var t = 0;
+    const t = 0;
 
-    for (var y = t + 1; y < this.boardSize; y++) {
-      var tVal = this.board[x][t];
-      var yVal = this.board[x][y];
+    for (let y = t + 1; y < this.boardSize; y++) {
+      const tVal = this.board[x][t];
+      const yVal = this.board[x][y];
 
       if (yVal > 0) {
         if (tVal == 0) {
@@ -313,16 +312,16 @@ Game.prototype.MoveDown = function (numRandos) {
     return null;
   }
 
-  var moves = new Array();
+  const moves = new Array();
 
   // for each column, look up and merge down
-  for (var x = 0; x < this.boardSize; x++) {
+  for (let x = 0; x < this.boardSize; x++) {
     // target index to slide to
-    var t = this.boardSize - 1;
+    const t = this.boardSize - 1;
 
-    for (var y = t - 1; y >= 0; y--) {
-      var tVal = this.board[x][t];
-      var yVal = this.board[x][y];
+    for (let y = t - 1; y >= 0; y--) {
+      const tVal = this.board[x][t];
+      const yVal = this.board[x][y];
 
       if (yVal > 0) {
         if (tVal == 0) {
@@ -384,16 +383,16 @@ Game.prototype.MoveLeft = function (numRandos) {
     return null;
   }
 
-  var moves = new Array();
+  const moves = new Array();
 
   // for each column, look right and merge left
-  for (var y = 0; y < this.boardSize; y++) {
+  for (let y = 0; y < this.boardSize; y++) {
     // target index to slide to
-    var t = 0;
+    const t = 0;
 
-    for (var x = t + 1; x < this.boardSize; x++) {
-      var tVal = this.board[t][y];
-      var xVal = this.board[x][y];
+    for (let x = t + 1; x < this.boardSize; x++) {
+      const tVal = this.board[t][y];
+      const xVal = this.board[x][y];
 
       if (xVal > 0) {
         if (tVal == 0) {
@@ -455,16 +454,16 @@ Game.prototype.MoveRight = function (numRandos) {
     return null;
   }
 
-  var moves = new Array();
+  const moves = new Array();
 
   // for each column, look left and merge right
-  for (var y = 0; y < this.boardSize; y++) {
+  for (let y = 0; y < this.boardSize; y++) {
     // target index to slide to
-    var t = this.boardSize - 1;
+    const t = this.boardSize - 1;
 
-    for (var x = t - 1; x >= 0; x--) {
-      var tVal = this.board[t][y];
-      var xVal = this.board[x][y];
+    for (let x = t - 1; x >= 0; x--) {
+      const tVal = this.board[t][y];
+      const xVal = this.board[x][y];
 
       if (xVal > 0) {
         if (tVal == 0) {
