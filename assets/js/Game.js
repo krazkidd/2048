@@ -15,31 +15,80 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with 204∞.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * @typedef {Object} Game
+ * @property {number} boardSize - TODO
+ * @property {number} numRandos - TODO
+ */
 
+/**
+ * @typedef {Object} MoveLogItem
+ * @property {number} oldX - TODO
+ * @property {number} oldY - TODO
+ * @property {number} newX - TODO
+ * @property {number} newY - TODO
+ */
+
+/**
+ * TODO
+ * @constructor
+ * @param  {number} boardSize
+ *         TODO
+ * @param  {number} numRandos
+ *         TODO
+ * @return {Game}
+ *         TODO
+ */
 Game = function (boardSize, numRandos) {
   // private ///////////////////////////////
 
-  // keep track of game over state so we don't have to search the grid
-  // once we've reached the end game
+  /**
+   * Keeps track of game over state so we don't have to search the grid
+   * once we've reached the end game.
+   * @type {boolean}
+   */
   var isGameOver = false;
 
   // public ////////////////////////////////
 
-  // the internal game board/grid
+  /**
+   * The internal game board/grid.
+   * @type {number[][]}
+   */
   this.board = null;
+  /**
+   * @type {number}
+   */
   this.boardSize = boardSize;
 
+  /**
+   * @type {number}
+   */
   this.turnCount = 0;
-  this.score = 0
+  /**
+   * @type {number}
+   */
+  this.score = 0;
 
-  // number of free spaces
+  /**
+   * Number of free spaces.
+   * @type {number}
+   */
   this.numFree = boardSize * boardSize;
-  // highest number on the board
+  /**
+   * Highest number on the board.
+   * @type {number}
+   */
   this.maxCell = 0;
 
 
   // privileged ////////////////////////////
 
+  /**
+   * TODO
+   * @return {boolean}
+   *         TODO
+   */
   this.IsGameOver = function () {
     // short circuit
     if (isGameOver) {
@@ -93,10 +142,30 @@ Game = function (boardSize, numRandos) {
 //   Right: 3
 // };
 
+/**
+ * TODO
+ * @param  {number} x
+ *         TODO
+ * @param  {number} y
+ *         TODO
+ * @return {boolean}
+ *         TODO
+ */
 Game.prototype._IsValidCell = function (x, y) {
   return x >= 0 && y >= 0 && x < this.boardSize && y < this.boardSize;
 };
 
+/**
+ * TODO
+ * @param  {number} x
+ *         TODO
+ * @param  {number} y
+ *         TODO
+ * @param  {number} val
+ *         TODO
+ * @return {boolean}
+ *         TODO
+ */
 Game.prototype._SetCellVal = function (x, y, val) {
   if (!this._IsValidCell(x, y)) {
     return false;
@@ -110,6 +179,15 @@ Game.prototype._SetCellVal = function (x, y, val) {
   return true;
 };
 
+/**
+ * TODO
+ * @param  {number} x
+ *         TODO
+ * @param  {number} y
+ *         TODO
+ * @return {number}
+ *         TODO
+ */
 Game.prototype.GetCellVal = function (x, y) {
   if (this._IsValidCell(x, y)) {
     return this.board[x][y];
@@ -118,6 +196,13 @@ Game.prototype.GetCellVal = function (x, y) {
   return -1;
 };
 
+/**
+ * TODO
+ * @param  {number} count
+ *         TODO
+ * @return {(MoveLogItem[]|null)}
+ *         TODO
+ */
 Game.prototype._AddRandos = function (count) {
   if (this.IsGameOver()) {
     return null;
@@ -146,6 +231,13 @@ Game.prototype._AddRandos = function (count) {
   return created;
 };
 
+/**
+ * TODO
+ * @param  {number} numRandos
+ *         TODO
+ * @return {(MoveLogItem[]|null)}
+ *         TODO
+ */
 Game.prototype.MoveUp = function (numRandos) {
   if (this.IsGameOver()) {
     return null;
@@ -210,6 +302,13 @@ Game.prototype.MoveUp = function (numRandos) {
   return moves;
 };
 
+/**
+ * TODO
+ * @param  {number} numRandos
+ *         TODO
+ * @return {(MoveLogItem[]|null)}
+ *         TODO
+ */
 Game.prototype.MoveDown = function (numRandos) {
   if (this.IsGameOver()) {
     return null;
@@ -274,6 +373,13 @@ Game.prototype.MoveDown = function (numRandos) {
   return moves;
 };
 
+/**
+ * TODO
+ * @param  {number} numRandos
+ *         TODO
+ * @return {(MoveLogItem[]|null)}
+ *         TODO
+ */
 Game.prototype.MoveLeft = function (numRandos) {
   if (this.IsGameOver()) {
     return null;
@@ -338,6 +444,13 @@ Game.prototype.MoveLeft = function (numRandos) {
   return moves;
 };
 
+/**
+ * TODO
+ * @param  {number} numRandos
+ *         TODO
+ * @return {(MoveLogItem[]|null)}
+ *         TODO
+ */
 Game.prototype.MoveRight = function (numRandos) {
   if (this.IsGameOver()) {
     return null;
@@ -402,6 +515,19 @@ Game.prototype.MoveRight = function (numRandos) {
   return moves;
 };
 
+/**
+ * TODO
+ * @param {MoveLogItem[]} arr
+ *        TODO
+ * @param {number} oldX
+ *        TODO
+ * @param {number} oldY
+ *        TODO
+ * @param {number} newX
+ *        TODO
+ * @param {number} newY
+ *        TODO
+ */
 Game.prototype._RecordMoveChange = function (arr, oldX, oldY, newX, newY) {
   arr.push({
     oldX,

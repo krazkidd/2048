@@ -18,8 +18,10 @@
 
 var ANIMATION_DURATION = 80;
 
+/** @type {Game} */
 var game;
 
+/** @type {boolean} */
 var isFirst2048 = false;
 
 $(function () {
@@ -34,6 +36,9 @@ $(function () {
   document.addEventListener('keyup', keyboardHandler);
 });
 
+/**
+ * TODO
+ */
 function resetGame() {
   game = new Game(4, 2);
 
@@ -44,7 +49,9 @@ function resetGame() {
   updateGameStatus();
 }
 
-// build the grid
+/**
+ * Build the grid.
+ */
 function initGrid() {
   var $game = $("#game").empty();
 
@@ -67,7 +74,11 @@ function initGrid() {
   }
 }
 
-// implements the game logic
+/**
+ * Implements the game logic.
+ * @param  {Event} event
+ *         TODO
+ */
 function keyboardHandler(event) {
   //TODO how much of this should be wrapped in a setTimeout()?
   if (game.IsGameOver()) {
@@ -102,6 +113,10 @@ function keyboardHandler(event) {
   }
 }
 
+/**
+ * TODO
+ * @param {MoveLogItem[]} moves
+ */
 function animateMoves(moves) {
   $all = $("#game .game-cell").children("span");
 
@@ -130,6 +145,9 @@ function animateMoves(moves) {
   });
 }
 
+/**
+ * TODO
+ */
 function updateGrid() {
   for (var x = 0; x < game.boardSize; x++) {
     for (var y = 0; y < game.boardSize; y++) {
@@ -144,6 +162,9 @@ function updateGrid() {
   }
 }
 
+/**
+ * TODO
+ */
 function updateGameStatus() {
   $("#score").text(game.score);
 
