@@ -118,8 +118,7 @@ Game = function (boardSize, numRandos) {
     isGameOver = true;
 
     return true;
-  }
-
+  };
 
   // init //////////////////////////////////
 
@@ -219,7 +218,7 @@ Game.prototype._AddRandos = function (count) {
     do {
       x = Math.floor(Math.random() * this.boardSize);
       y = Math.floor(Math.random() * this.boardSize);
-    } while (this.GetCellVal(x, y) > 0)
+    } while (this.GetCellVal(x, y) > 0);
 
     this._SetCellVal(x, y, newCellVal);
 
@@ -274,7 +273,7 @@ Game.prototype.MoveUp = function (numRandos) {
           this.score += tVal + yVal;
 
           t++;
-        } else { // tVal != yVal
+        } else {
           // can't merge; move target
 
           t++;
@@ -345,7 +344,7 @@ Game.prototype.MoveDown = function (numRandos) {
           this.score += tVal + yVal;
 
           t--;
-        } else { // tVal != yVal
+        } else {
           // can't merge; move target
 
           t--;
@@ -416,7 +415,7 @@ Game.prototype.MoveLeft = function (numRandos) {
           this.score += tVal + xVal;
 
           t++;
-        } else { // tVal != xVal
+        } else {
           // can't merge; move target
 
           t++;
@@ -487,7 +486,7 @@ Game.prototype.MoveRight = function (numRandos) {
           this.score += tVal + xVal;
 
           t--;
-        } else { // tVal != xVal
+        } else {
           // can't merge; move target
 
           t--;

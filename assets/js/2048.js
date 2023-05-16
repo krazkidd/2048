@@ -25,7 +25,7 @@ var game;
 var isFirst2048 = false;
 
 $(function () {
-  $("#reset").on("click", function() {
+  $("#reset").on("click", function () {
     resetGame();
 
     $(this).blur();
@@ -33,7 +33,7 @@ $(function () {
 
   resetGame();
 
-  document.addEventListener('keyup', keyboardHandler);
+  document.addEventListener("keyup", keyboardHandler);
 });
 
 /**
@@ -131,8 +131,14 @@ function animateMoves(moves) {
       //       If this loop is fast, we'll never notice.
 
       // i guess stop (and continue) any running animations, too
-      $("#game-cell" + "-" + move.oldX + "-" + move.oldY).children("span").stop().fadeOut(ANIMATION_DURATION);
-      $("#game-cell" + "-" + move.newX + "-" + move.newY).children("span").stop().fadeOut(ANIMATION_DURATION);
+      $("#game-cell" + "-" + move.oldX + "-" + move.oldY)
+        .children("span")
+        .stop()
+        .fadeOut(ANIMATION_DURATION);
+      $("#game-cell" + "-" + move.newX + "-" + move.newY)
+        .children("span")
+        .stop()
+        .fadeOut(ANIMATION_DURATION);
     });
   });
 
