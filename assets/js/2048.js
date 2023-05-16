@@ -18,7 +18,7 @@
 const ANIMATION_DURATION = 80;
 
 /** @type {Game} */
-let game;
+let game = null;
 
 /** @type {boolean} */
 let isFirst2048 = false;
