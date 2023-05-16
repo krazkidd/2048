@@ -15,14 +15,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with 204∞.  If not, see <http://www.gnu.org/licenses/>.
 
-
-var ANIMATION_DURATION = 80;
+const ANIMATION_DURATION = 80;
 
 /** @type {Game} */
-var game;
+let game;
 
 /** @type {boolean} */
-var isFirst2048 = false;
+let isFirst2048 = false;
 
 $(function () {
   $("#reset").on("click", function () {
@@ -53,15 +52,15 @@ function resetGame() {
  * Build the grid.
  */
 function initGrid() {
-  var $game = $("#game").empty();
+  let $game = $("#game").empty();
 
-  for (var y = 0; y < game.boardSize; y++) {
-    var $row = $("<div>")
+  for (let y = 0; y < game.boardSize; y++) {
+    let $row = $("<div>")
       .addClass("row")
       .appendTo($game);
 
-    for (var x = 0; x < game.boardSize; x++) {
-      var $col = $("<div>")
+    for (let x = 0; x < game.boardSize; x++) {
+      let $col = $("<div>")
         .addClass("col")
         .appendTo($row);
 
@@ -85,7 +84,7 @@ function keyboardHandler(event) {
     return;
   }
 
-  var moves = null;
+  let moves = null;
 
   switch (event.code) {
     case "ArrowUp":
@@ -118,7 +117,7 @@ function keyboardHandler(event) {
  * @param {MoveLogItem[]} moves
  */
 function animateMoves(moves) {
-  $all = $("#game .game-cell").children("span");
+  let $all = $("#game .game-cell").children("span");
 
   // jump animations from previous turn to their end state
   $all.finish();
@@ -155,9 +154,9 @@ function animateMoves(moves) {
  * TODO
  */
 function updateGrid() {
-  for (var x = 0; x < game.boardSize; x++) {
-    for (var y = 0; y < game.boardSize; y++) {
-      var $cell = $("#game-cell" + "-" + x + "-" + y).children("span");
+  for (let x = 0; x < game.boardSize; x++) {
+    for (let y = 0; y < game.boardSize; y++) {
+      let $cell = $("#game-cell" + "-" + x + "-" + y).children("span");
 
       if (game.GetCellVal(x, y) > 0) {
         $cell.text(game.GetCellVal(x, y));
