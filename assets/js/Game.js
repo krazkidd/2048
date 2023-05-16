@@ -246,7 +246,7 @@ Game.prototype.MoveUp = function (numRandos) {
   // for each column, look down and merge up
   for (let x = 0; x < this.boardSize; x++) {
     // target index to slide to
-    const t = 0;
+    let t = 0;
 
     for (let y = t + 1; y < this.boardSize; y++) {
       const tVal = this.board[x][t];
@@ -317,7 +317,7 @@ Game.prototype.MoveDown = function (numRandos) {
   // for each column, look up and merge down
   for (let x = 0; x < this.boardSize; x++) {
     // target index to slide to
-    const t = this.boardSize - 1;
+    let t = this.boardSize - 1;
 
     for (let y = t - 1; y >= 0; y--) {
       const tVal = this.board[x][t];
@@ -388,7 +388,7 @@ Game.prototype.MoveLeft = function (numRandos) {
   // for each column, look right and merge left
   for (let y = 0; y < this.boardSize; y++) {
     // target index to slide to
-    const t = 0;
+    let t = 0;
 
     for (let x = t + 1; x < this.boardSize; x++) {
       const tVal = this.board[t][y];
@@ -459,7 +459,7 @@ Game.prototype.MoveRight = function (numRandos) {
   // for each column, look left and merge right
   for (let y = 0; y < this.boardSize; y++) {
     // target index to slide to
-    const t = this.boardSize - 1;
+    let t = this.boardSize - 1;
 
     for (let x = t - 1; x >= 0; x--) {
       const tVal = this.board[t][y];
