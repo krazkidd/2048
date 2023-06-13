@@ -81,7 +81,6 @@ Game = function (boardSize, numRandos) {
    */
   this.maxCell = 0;
 
-
   // privileged ////////////////////////////
 
   /**
@@ -103,13 +102,25 @@ Game = function (boardSize, numRandos) {
     // see if we can merge
     for (let x = 0; x < this.boardSize; x++) {
       for (let y = 0; y < this.boardSize; y++) {
-        if (this._IsValidCell(x, y - 1) && this.board[x][y] == this.board[x][y - 1]) {
+        if (
+          this._IsValidCell(x, y - 1) &&
+          this.board[x][y] == this.board[x][y - 1]
+        ) {
           return false;
-        } else if (this._IsValidCell(x, y + 1) && this.board[x][y] == this.board[x][y + 1]) {
+        } else if (
+          this._IsValidCell(x, y + 1) &&
+          this.board[x][y] == this.board[x][y + 1]
+        ) {
           return false;
-        } else if (this._IsValidCell(x - 1, y) && this.board[x][y] == this.board[x - 1][y]) {
+        } else if (
+          this._IsValidCell(x - 1, y) &&
+          this.board[x][y] == this.board[x - 1][y]
+        ) {
           return false;
-        } else if (this._IsValidCell(x + 1, y) && this.board[x][y] == this.board[x + 1][y]) {
+        } else if (
+          this._IsValidCell(x + 1, y) &&
+          this.board[x][y] == this.board[x + 1][y]
+        ) {
           return false;
         }
       }
@@ -532,6 +543,6 @@ Game.prototype._RecordMoveChange = function (arr, oldX, oldY, newX, newY) {
     oldX,
     oldY,
     newX,
-    newY
+    newY,
   });
 };

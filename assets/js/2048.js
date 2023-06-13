@@ -55,14 +55,10 @@ function initGrid() {
   let $game = $("#game").empty();
 
   for (let y = 0; y < game.boardSize; y++) {
-    let $row = $("<div>")
-      .addClass("row")
-      .appendTo($game);
+    let $row = $("<div>").addClass("row").appendTo($game);
 
     for (let x = 0; x < game.boardSize; x++) {
-      let $col = $("<div>")
-        .addClass("col")
-        .appendTo($row);
+      let $col = $("<div>").addClass("col").appendTo($row);
 
       $("<div>")
         .attr("id", "game-cell" + "-" + x + "-" + y)
